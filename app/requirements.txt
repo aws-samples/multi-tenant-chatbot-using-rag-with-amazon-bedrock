@@ -1,0 +1,4 @@
+streamlit==1.27.1
+boto3
+cryptography==41.0.4
+httpx==0.25.0

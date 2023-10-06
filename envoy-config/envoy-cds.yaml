@@ -1,0 +1,31 @@
+resources:
+- '@type': type.googleapis.com/envoy.config.cluster.v3.Cluster
+  connect_timeout: 30s
+  dns_lookup_family: AUTO
+  lb_policy: ROUND_ROBIN
+  load_assignment:
+    cluster_name: tenanta_oidc_proxy
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: oauth2-proxy.tenanta-oidc-proxy-ns.svc.cluster.local
+              port_value: 80
+  name: tenanta_oidc_proxy
+  type: LOGICAL_DNS
+- '@type': type.googleapis.com/envoy.config.cluster.v3.Cluster
+  connect_timeout: 30s
+  dns_lookup_family: AUTO
+  lb_policy: ROUND_ROBIN
+  load_assignment:
+    cluster_name: tenantb_oidc_proxy
+    endpoints:
+    - lb_endpoints:
+      - endpoint:
+          address:
+            socket_address:
+              address: oauth2-proxy.tenantb-oidc-proxy-ns.svc.cluster.local
+              port_value: 80
+  name: tenantb_oidc_proxy
+  type: LOGICAL_DNS

@@ -1,0 +1,35 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "LLMDemoDynamoDBAccess",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:GetItem",
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:DescribeTable",
+                "dynamodb:DeleteItem",
+                "dynamodb:Scan",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:ConditionCheckItem"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:${AWS_REGION}:${ACCOUNT_ID}:table/Sessions_${TENANT}_${RANDOM_STRING}",
+                "arn:aws:dynamodb:${AWS_REGION}:${ACCOUNT_ID}:table/Sessions_${TENANT}_${RANDOM_STRING}/index/*",
+                "arn:aws:dynamodb:${AWS_REGION}:${ACCOUNT_ID}:table/ChatHistory_${TENANT}_${RANDOM_STRING}",
+                "arn:aws:dynamodb:${AWS_REGION}:${ACCOUNT_ID}:table/ChatHistory_${TENANT}_${RANDOM_STRING}/index/*"
+            ]
+        },
+        {
+            "Sid": "LLMDemoBedrockAccess",
+            "Effect": "Allow",
+            "Action": [
+               "bedrock:InvokeModel"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

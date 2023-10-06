@@ -1,0 +1,71 @@
+##################################################################################################
+# Tenant Service Account
+##################################################################################################
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::${ACCOUNT_ID}:role/${EKS_CLUSTER_NAME}-${TENANT}-chatbot-access-role-${RANDOM_STRING}
+  name: ${SA_NAME}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatbot
+  labels:
+    app: chatbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chatbot
+  template:
+    metadata:
+      labels:
+        workload-tier: frontend
+        app: chatbot
+    spec:
+      serviceAccountName: ${SA_NAME}
+      containers:
+        - image: ${REPO_URI_CHATBOT}:latest
+          imagePullPolicy: Always
+          name: chatbot
+          ports:
+            - containerPort: 8501
+          env:
+          - name: ISSUER_URI
+            value: ${ISSUER_URI}
+          - name: SESSIONS_TABLE
+            value: ${SESSIONS_TABLE}
+        - image: ${REPO_URI_RAGAPI}:latest
+          imagePullPolicy: Always
+          name: ragapi
+          ports:
+            - containerPort: 8000
+          env:
+          - name: CONTEXTUAL_DATA_BUCKET
+            value: contextual-data-${TENANT}-${RANDOM_STRING}
+          - name: CHATHISTORY_TABLE
+            value: ${CHATHISTORY_TABLE}
+          - name: TEXT2TEXT_MODEL_ID
+            value: ${TEXT2TEXT_MODEL_ID}
+          - name: EMBEDDING_MODEL_ID
+            value: ${EMBEDDING_MODEL_ID}
+          - name: BEDROCK_SERVICE
+            value: ${BEDROCK_SERVICE}
+          - name: AWS_DEFAULT_REGION
+            value: ${AWS_DEFAULT_REGION}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: chatbot
+  labels:
+    app: chatbot
+spec:
+  selector:
+    app: chatbot
+  ports:
+    - port: 80
+      name: http
+      targetPort: 8501

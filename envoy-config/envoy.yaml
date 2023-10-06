@@ -1,0 +1,14 @@
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901
+      protocol: TCP
+node:
+  cluster: envoy-reverse-proxy-cluster
+  id: envoy-reverse-proxy-id
+dynamic_resources:
+  lds_config:
+    path: "/config/envoy/envoy-lds.yaml"
+  cds_config:
+    path: "/config/envoy/envoy-cds.yaml"

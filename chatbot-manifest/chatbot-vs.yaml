@@ -1,0 +1,16 @@
+    apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: chatbot
+    spec:
+      hosts:
+      - ${TENANT}.example.com
+      gateways:
+      - llm-demo-gateway-ns/llm-demo-gateway
+      http:
+        - route:
+            - destination:
+                host: chatbot.${NAMESPACE}.svc.cluster.local
+                port:
+                  number: 80
+
