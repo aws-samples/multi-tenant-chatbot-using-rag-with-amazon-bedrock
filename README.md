@@ -1,4 +1,6 @@
 # How to Build a Multitenant Chatbot with Retrieval Augmented Generation (RAG) using Amazon Bedrock and Amazon EKS
+Note that the instructions below are intended to give you step-by-step, how-to instructions for getting this solution up and running in your own AWS account. For a general description and overview of the solution, please see the 
+[blog post here](https://aws.amazon.com/blogs/containers/build-a-multi-tenant-chatbot-with-rag-using-amazon-bedrock-and-amazon-eks/).
 
 ## BEFORE YOU START
 In order to build this environment, ensure that your have access to the required Bedrock models
