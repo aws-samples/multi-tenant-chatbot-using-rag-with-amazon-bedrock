@@ -1,6 +1,17 @@
 #!/usr/bin/bash
 source ~/.bash_profile
 
+echo "Deleting CloudFormation Resources"
+export EKS_NODEGROUP=eksctl-${EKS_CLUSTER_NAME}-nodegroup-nodegroup
+export EKS_NODE=eksctl-${EKS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-aws-node
+export EKS_NLB=eksctl-${EKS_CLUSTER_NAME}-addon-iamserviceaccount-kube-system-aws-load-balancer-controller   
+export CF_CLUSTER=eksctl-${EKS_CLUSTER_NAME}-cluster
+
+aws cloudformation delete-stack --stack-name ${EKS_NODEGROUP}
+aws cloudformation delete-stack --stack-name ${EKS_NODE}    
+aws cloudformation delete-stack --stack-name ${EKS_NLB}
+aws cloudformation delete-stack --stack-name ${CF_CLUSTER}
+
 echo "Deleting ECR Repositories"
 aws ecr delete-repository \
   --force \
@@ -16,14 +27,11 @@ then
 	docker rmi -f $(docker images -a -q)
 fi
 
-echo "Deleting EKS Cluster"
-eksctl delete cluster --name ${EKS_CLUSTER_NAME}
-
 echo "Deleting Envoy Config S3 Bucket"
 aws s3 rm s3://envoy-config-${RANDOM_STRING} --recursive
 aws s3 rb s3://envoy-config-${RANDOM_STRING} --force
 
-echo "Detaching IAM policies from Envoy & Chabot SA Roles"
+echo "Detaching IAM policies from Envoy & Chatbot SA Roles"
 aws iam detach-role-policy \
     --role-name ${EKS_CLUSTER_NAME}-s3-access-role-${RANDOM_STRING} \
     --policy-arn arn:aws:iam::${ACCOUNT_ID}:policy/s3-envoy-config-access-policy-${RANDOM_STRING}
@@ -118,7 +126,10 @@ sed -i '/export BEDROCK_ENDPOINT/d' ~/.bash_profile
 sed -i '/export TEXT2TEXT_MODEL_ID/d' ~/.bash_profile
 sed -i '/export EMBEDDING_MODEL_ID/d' ~/.bash_profile
 sed -i '/export BEDROCK_SERVICE/d' ~/.bash_profile
-
+sed -i '/export EKS_NODEGROUP/d' ~/.bash_profile
+sed -i '/export EKS_NODE/d' ~/.bash_profile
+sed -i '/export EKS_NLB/d' ~/.bash_profile
+sed -i '/export CF_CLUSTER/d' ~/.bash_profile
 
 unset ACCOUNT_ID
 unset AWS_REGION
