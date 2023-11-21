@@ -27,7 +27,7 @@ for t in TENANTS:
     elif t == "tenantb":
         DATAFILE="Amazon_EMR_FAQs.csv"
 
-    loader = CSVLoader(f"./{LOCAL_RAG_DIR}/{DATAFILE}")
+    loader = CSVLoader(f"./{LOCAL_RAG_DIR}/{DATAFILE}", csv_args={"fieldnames": ["question", "answer"]})
     documents_aws = loader.load()
     print(f"documents:loaded:size={len(documents_aws)}")
     
